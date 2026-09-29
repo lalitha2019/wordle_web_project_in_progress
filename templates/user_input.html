@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Date Input Example</title>
+</head>
+<body>
+
+    <h2>Date Form</h2>
+
+    <form id="date_input" action="/show_dates">
+        <label for="start_date">Choose a date: </label>
+        <input type="date" name='start_date' id="start_date">
+
+        <label for="end_date">Choose a date: </label>
+        <input type="date" name='end_date' id="end_date">
+       <span id="date_val">{{last_date}}</span>
+        <!--<button type="button" onclick="show_input()">Show Date</button>-->
+        <button type="submit" onclick="show_input()">Plot the counts</button>
+    </form>
+
+    <p>Your selected start date is: <span id="start_date_display">"2021-06-19"</span></p>
+    <p>Your selected end date is: <span id="end_date_display"></span>{{last_date}}</p>
+
+    <div class="graph-container">
+        <img src="data:image/png;base64,{{ plot_var }}" alt="Matplotlib Graph">
+    </div>
+    
+    <script>
+        const start_date_input = document.getElementById('start_date')
+        const end_date_input = document.getElementById('end_date')
+        const end_date_val = document.getElementById('date_val').textContent
+        //const today = new Date(end_date_input.value)
+        //const yesterday = new Date(end_date_input.value)
+        const today = new Date(end_date_val)
+        const yesterday = new Date(end_date_val)
+        yesterday.setDate(yesterday.getDate() - 1)
+
+        function set_values(){
+                start_date_input.value = "2021-06-19"
+                start_date_input.min = "2021-06-19"
+                start_date_input.max = yesterday.toISOString().split('T')[0]
+
+                end_date_input.valueAsDate = today
+                end_date_input.min = "2021-06-20"
+                end_date_input.max = today.toISOString().split('T')[0]
+
+            document.getElementById('start_date_display').textContent = start_date_value
+            document.getElementById('end_date_display').textContent = end_date_value;
+        }
+
+        document.addEventListener("DOMContentLoaded", set_values);
+
+        start_date_input.addEventListener("change",
+            function() {
+                const selected_start_date = start_date_input.valueAsDate
+                if(selected_start_date) {
+                    const new_date = selected_start_date
+                    new_date.setDate(new_date.getDate() + 1)
+                    end_date_input.min = new_date.toISOString().split('T')[0]
+                }
+                else {
+                    set_values()
+                }
+            })
+
+            end_date_input.addEventListener("change",
+            function() {
+                const selected_end_date = end_date_input.valueAsDate
+                if(selected_end_date) {
+                    const new_date = selected_end_date
+                    new_date.setDate(new_date.getDate() - 1)
+                    start_date_input.max = new_date.toISOString().split('T')[0]
+                }
+                else {
+                    set_values()
+                }
+            })
+        function show_input() {
+            // Get the value from the date input
+            const start_date_value = document.getElementById('start_date').value;
+            const end_date_value = document.getElementById('end_date').value
+            
+            // Print the value inside the span element
+            document.getElementById('start_date_display').textContent = start_date_value
+            document.getElementById('end_date_display').textContent = end_date_value;
+        }
+    </script>
+
+</body>
+</html>
